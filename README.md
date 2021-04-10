@@ -1,6 +1,7 @@
-# Create DNS Record Action for GitHub
+# Create Cloudflare DNS Record Action for GitHub
 
-Creates a new CloudFlare DNS record.
+Creates new CloudFlare DNS record.
+Updates the record if it already exists.
 
 ## Usage via Github Actions
 
@@ -13,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: infraway/create-dns-record@v1
+      - uses: infraway/create-dns-record@v2.0
         with:
           type: "A"
           name: "review.example.com"
