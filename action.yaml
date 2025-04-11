@@ -1,6 +1,6 @@
 name: "CloudFlare Create DNS Record"
 description: "Creates a new CloudFlare DNS record"
-author: "InfraWay"
+author: "KouraWealth"
 
 inputs:
   type:
@@ -13,15 +13,15 @@ inputs:
     description: 'DNS record content, e.g. "127.0.0.1"'
   ttl:
     description: "Time to live for DNS record. Value of 1 is 'automatic'"
-    default: 1
+    default: "1"
   proxied:
     description: "Whether the record is receiving the performance and security benefits of Cloudflare"
-    default: true
+    default: 'true'
   token:
     description: "CloudFlare API token"
     required: true
   zone:
-    default: "CloudFlare zone"
+    description: "CloudFlare zone"
     required: true
 
 outputs:
@@ -31,7 +31,7 @@ outputs:
     description: 'Affected domain name'
 
 runs:
-  using: "node12"
+  using: "node20"
   main: "main.js"
 
 branding:

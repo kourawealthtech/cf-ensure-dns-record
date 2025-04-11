@@ -3,15 +3,28 @@
  * https://github.com/marketplace/actions/cloudflare-create-dns-record
  */
 
-const path = require("path");
+const fs = require("fs");
 const cp = require("child_process");
+
+const CF_API_BASE_URL = "https://api.cloudflare.com/client/v4";
+
+const setOutput = (name, value) => {
+  if (process.env.GITHUB_ACTIONS) {
+    const outputPath = process.env.GITHUB_OUTPUT;
+    if (outputPath) {
+      fs.appendFileSync(outputPath, `${name}=${value}\n`);
+    } else {
+      console.log(`::set-output name=${name}::${value}`);
+    }
+  }
+}
 
 const getCurrentRecordId = () => {
   //https://api.cloudflare.com/#dns-records-for-a-zone-list-dns-records
   const { status, stdout } = cp.spawnSync("curl", [
     ...["--header", `Authorization: Bearer ${process.env.INPUT_TOKEN}`],
     ...["--header", "Content-Type: application/json"],
-    `https://api.cloudflare.com/client/v4/zones/${process.env.INPUT_ZONE}/dns_records`,
+    `${CF_API_BASE_URL}/zones/${process.env.INPUT_ZONE}/dns_records`,
   ]);
 
   if (status !== 0) {
@@ -49,7 +62,7 @@ const createRecord = () => {
       ttl: Number(process.env.INPUT_TTL),
       proxied: process.env.INPUT_PROXIED == "true",
     }),
-    `https://api.cloudflare.com/client/v4/zones/${process.env.INPUT_ZONE}/dns_records`,
+    `${CF_API_BASE_URL}/zones/${process.env.INPUT_ZONE}/dns_records`,
   ]);
 
   if (status !== 0) {
@@ -64,8 +77,8 @@ const createRecord = () => {
     process.exit(1);
   }
 
-  console.log(`::set-output name=id::${result.id}`);
-  console.log(`::set-output name=name::${result.name}`);
+  setOutput('id', result.id);
+  setOutput('name', result.name);
 };
 
 const updateRecord = (id) => {
@@ -83,7 +96,7 @@ const updateRecord = (id) => {
       ttl: Number(process.env.INPUT_TTL),
       proxied: process.env.INPUT_PROXIED == "true",
     }),
-    `https://api.cloudflare.com/client/v4/zones/${process.env.INPUT_ZONE}/dns_records/${id}`,
+    `${CF_API_BASE_URL}/zones/${process.env.INPUT_ZONE}/dns_records/${id}`,
   ]);
 
   if (status !== 0) {
@@ -98,13 +111,13 @@ const updateRecord = (id) => {
     process.exit(1);
   }
 
-  console.log(`::set-output name=record_id::${result.id}`);
-  console.log(`::set-output name=name::${result.name}`);
+  setOutput('record_id', result.id);
+  setOutput('name', result.name);
 }
 
 const id = getCurrentRecordId();
 if (id) {
   updateRecord(id);
-  process.exit(0);
+} else {
+  createRecord();
 }
-createRecord();
