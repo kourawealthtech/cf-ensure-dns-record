@@ -1,4 +1,4 @@
-name: "CloudFlare Create DNS Record"
+name: "KW: CloudFlare - Create DNS Record"
 description: "Creates a new CloudFlare DNS record"
 author: "KouraWealth"
 
