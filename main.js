@@ -38,8 +38,8 @@ const getCurrentRecordId = () => {
     process.exit(1);
   }
 
-  const name = process.env.INPUT_NAME;
-  const record = result.find((x) => x.name === name);
+  const name = process.env.INPUT_NAME.toLowerCase();
+  const record = result.find((x) => x.name.toLowerCase() === name);
 
   if (!record) {
     return null
@@ -57,7 +57,7 @@ const createRecord = () => {
     ...["--silent", "--data"],
     JSON.stringify({
       type: process.env.INPUT_TYPE,
-      name: process.env.INPUT_NAME,
+      name: process.env.INPUT_NAME.toLowerCase(),
       content: process.env.INPUT_CONTENT,
       ttl: Number(process.env.INPUT_TTL),
       proxied: process.env.INPUT_PROXIED == "true",
