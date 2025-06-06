@@ -21,10 +21,12 @@ const setOutput = (name, value) => {
 
 const getCurrentRecordId = () => {
   //https://api.cloudflare.com/#dns-records-for-a-zone-list-dns-records
+  const name = process.env.INPUT_NAME.toLowerCase();
+
   const { status, stdout } = cp.spawnSync("curl", [
     ...["--header", `Authorization: Bearer ${process.env.INPUT_TOKEN}`],
     ...["--header", "Content-Type: application/json"],
-    `${CF_API_BASE_URL}/zones/${process.env.INPUT_ZONE}/dns_records`,
+    `${CF_API_BASE_URL}/zones/${process.env.INPUT_ZONE}/dns_records?name.exact=` + encodeURIComponent(name),
   ]);
 
   if (status !== 0) {
@@ -39,7 +41,6 @@ const getCurrentRecordId = () => {
   }
   console.log(result);
 
-  const name = process.env.INPUT_NAME.toLowerCase();
   const record = result.find((x) => x.name.toLowerCase() === name);
 
   if (!record) {
