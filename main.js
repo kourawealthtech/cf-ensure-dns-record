@@ -39,7 +39,6 @@ const getCurrentRecordId = () => {
     console.log(`::error ::${errors[0].message}`);
     process.exit(1);
   }
-  console.log(result);
 
   const record = result.find((x) => x.name.toLowerCase() === name);
 
